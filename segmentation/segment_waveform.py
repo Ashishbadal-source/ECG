@@ -188,7 +188,7 @@
 import cv2
 import torch
 import numpy as np
-from segmentation.model.unet import UNet
+from segmentation.unet import UNet
 
 # device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -196,7 +196,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # load model once (IMPORTANT)
 model = UNet(in_channels=1, out_channels=1).to(device)
 model.load_state_dict(
-    torch.load("segmentation/model/weights.pth", map_location=device)
+    torch.load("segmentation/weights.pth", map_location=device)
 )
 model.eval()
 
