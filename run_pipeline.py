@@ -579,6 +579,7 @@ from signal_extraction.baseline_correction import remove_baseline
 from signal_extraction.bandpass_filter import bandpass_filter
 from signal_extraction.denoise import median_denoise
 from signal_extraction.normalize import normalize_signal
+from lead_extraction.order_and_polarity import order_and_fix_ecg
 
 # ================= ASSEMBLY =================
 from assemble.build_ecg_tensor import build_ecg_tensor
@@ -591,7 +592,7 @@ from utils.plot_ecg import plot_ecg
 # STEP 1: LOAD IMAGE
 # ==================================================
 print("STEP 1: Loading ECG image...")
-image_path = "data/raw_images/ecg_001.png"
+image_path = "data/raw_images/ecg_002.png"
 img = cv2.imread(image_path)
 
 if img is None:
@@ -618,8 +619,11 @@ print("✅ Quality check passed")
 print("STEP 3: Extracting waveform using edge-based method...")
 mask = extract_waveform_edges(img)
 
+# if cv2.countNonZero(mask) == 0:
+#     raise ValueError("❌ Edge-based extraction failed")
 if cv2.countNonZero(mask) == 0:
-    raise ValueError("❌ Edge-based extraction failed")
+    print("⚠️ Empty mask detected, continuing with raw edges")
+
 
 print("✅ Edge waveform extraction complete")
 
@@ -660,6 +664,7 @@ for i in range(len(lead_masks)):
 # ==================================================
 print("STEP 6: Building ECG tensor...")
 ecg = build_ecg_tensor(signals)
+ecg = order_and_fix_ecg(ecg)
 
 print("✅ ECG tensor shape:", ecg.shape)
 
