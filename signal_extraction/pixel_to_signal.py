@@ -1,3 +1,4 @@
+from scipy.signal import savgol_filter
 import numpy as np
 
 def pixel_to_signal(skel):
@@ -12,3 +13,5 @@ def pixel_to_signal(skel):
             signal.append(float(h - ys.mean()))
 
     return np.array(signal, dtype=np.float32)
+
+sig = savgol_filter(sig, window_length=21, polyorder=3)
